@@ -1,8 +1,9 @@
-s3-encryption is a thin wrapper around the `boto3` S3 client.  It facilitates client-side encryption which is compatable to
-that which is provided by the Ruby aws-sdk-resources.
+s3-encryption is a thin wrapper around the `boto3` S3 client.  It facilitates client-side encryption
+which is compatible to that provided by the Ruby aws-sdk-core-resources.
 
 Functionality is currently limited to that demonstrated below:
 
+Upload encrypted content in python:
 ```python
 
 import boto3
@@ -14,9 +15,10 @@ s3_key = 'testing.txt'
 
 s3e = S3EncryptionClient(encryption_key=plaintext_key, region_name=REGION)
 s3e.put_object(Body='this is a test', Bucket=BUCKET, Key='testing.txt')
-s3e.client.put_object(Body=encoded_key, Bucket='pubkey.domains.socrata.com', Key=s3_key + '.key')
+s3e.client.put_object(Body=encoded_key, Bucket=BUCKET, Key=s3_key + '.key')
 ```
 
+Download encrypted content in python:
 ```python
 
 REGION = 'us-west-2'
@@ -26,7 +28,7 @@ s3_key = 'testing.txt'
 s3 = boto3.client('s3', region_name=REGION)
 encoded_key = s3.get_object(Bucket=BUCKET, Key=s3_key + '.key')
 
-plaintext_key = decode_encryption_key(enc_key['Body'].read())
+plaintext_key = decode_encryption_key(encoded_key)
 
 s3e = S3EncryptionClient(encryption_key=plaintext_key, region_name=REGION)
 print s3e.get_object(Bucket=BUCKET, Key=s3_key)
@@ -34,6 +36,7 @@ print s3e.get_object(Bucket=BUCKET, Key=s3_key)
 ```
 
 
+Download encrypted content in ruby:
 ```ruby
 
 REGION = 'us-west-2'
