@@ -1,0 +1,10 @@
+include LICENSE
+include README.md
+include VERSION
+include requirements.txt
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * *.orig
+
+recursive-include s3_encryption *
