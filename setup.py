@@ -23,7 +23,7 @@ tests_require = [
 
 entry_points = dict()
 
-setup(name='s3_encryption',
+setup(name='s3-encryption',
       version=VERSION,
       description='Thin wrapper around botocore S3 client which supports client side encryption compatable with ruby aws-sdk-core',
       long_description=README,
