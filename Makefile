@@ -9,4 +9,4 @@ upload-release:
 	@$(MAKE) tests
 	@git tag $(VERSION)
 	@git push --tags origin master
-	@python setup.py sdist upload -r pipy
+	@python setup.py sdist upload -r pypi
