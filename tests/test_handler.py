@@ -1,6 +1,6 @@
 import unittest
 from nose.tools import assert_equal
-from mock import Mock, MagicMock, patch
+from mock import Mock
 
 
 from . import BaseS3EncryptTest
