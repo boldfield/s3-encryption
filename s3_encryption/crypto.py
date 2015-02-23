@@ -65,13 +65,5 @@ def aes_key():
     return Random.new().read(pyAES.block_size)
 
 
-#def pad_data(data):
-#    return data + b"\0" * (pyAES.block_size - len(data) % pyAES.block_size)
-#
-#
-#def unpad_data(data):
-#    return data.strip(b"\0")
-
-
 pad_data = lambda s: s + (pyAES.block_size - len(s) % pyAES.block_size) * chr(pyAES.block_size - len(s) % pyAES.block_size)
 unpad_data = lambda s: s[0:-ord(s[-1])]
