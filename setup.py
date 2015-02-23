@@ -25,7 +25,7 @@ entry_points = dict()
 
 setup(name='s3-encryption',
       version=VERSION,
-      description='Thin wrapper around botocore S3 client which supports client side encryption compatable with ruby aws-sdk-core',
+      description='Thin wrapper around boto3 S3 client which supports client side encryption compatable with ruby aws-sdk-core',
       long_description=README,
       keywords='S3 encryption',
       author='Brian Oldfield',
