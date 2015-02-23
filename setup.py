@@ -12,7 +12,7 @@ README = load_file('README.md')
 VERSION = load_file(os.path.join('s3_encryption', 'VERSION'))
 
 with open('requirements.txt', 'r') as fs:
-    install_requires = filter(lambda x: not not x, map(lambda y: y.strip('\n'), fs.readlines()))
+    install_requires = filter(lambda x: bool(x), map(lambda y: y.strip('\n'), fs.readlines()))
 
 
 tests_require = [
