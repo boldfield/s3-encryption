@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/boldfield/s3-encryption.svg?branch=master)](https://travis-ci.org/boldfield/s3-encryption)
+
+
 s3-encryption is a thin wrapper around the `boto3` S3 client.  It facilitates client-side encryption
 which is compatible to that provided by the Ruby aws-sdk-core-resources.
 
