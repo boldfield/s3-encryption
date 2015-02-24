@@ -1,4 +1,3 @@
-import unittest
 from nose.tools import assert_equal
 from mock import Mock
 
@@ -6,14 +5,13 @@ from mock import Mock
 from . import BaseS3EncryptTest
 
 
-class TestEncryptionHandler(BaseS3EncryptTest):
+class BaseHandlerTest(BaseS3EncryptTest):
     def setUp(self):
         self.iv = self.decode64("TO5mQgtOzWkTfoX4RE5tsA==")
         self.key = self.decode64("uSwsRlIMhY1klVYrgqceqjmQMmARcNl7rEKWW+7HVvA=")
         self.encrypted_key = 'gX+a4JQYj7FP0y5TAAvxTz4e2l0DvOItbXByml/NPtKQcUlsoGHoYR/T0TuYHcNj'
 
         self.master_key = self.decode64("kM5UVbhE/4rtMZJfsadYEdm2vaKFsmV2f5+URSeUCV4=")
-        self.encrypted_body = self.decode64("JIgXCTXpeQerPLiU6dVL4Q==")
 
         self.matdesc = '{}'
 
@@ -21,13 +19,23 @@ class TestEncryptionHandler(BaseS3EncryptTest):
         self.mock_provider = Mock(encryption_materials=self.mock_encryption_materials)
         self.mock_provider.key_for = lambda x: self.master_key
 
-        self.base_context = {
-            'raw_body': 'secret'
+        self.raw_body = 'secret'
+        self.encrypted_body = self.decode64("JIgXCTXpeQerPLiU6dVL4Q==")
+
+        self.base_request_context = {
+            'raw_body': self.raw_body
+        }
+
+        self.base_response_context = {
+            'body': self.encrypted_body
         }
 
         from s3_encryption import crypto
         crypto.aes_iv = lambda: self.iv
         crypto.aes_key = lambda: self.key
+
+
+class TestEncryptionHandler(BaseHandlerTest):
 
     def test_build_request_context(self):
         from s3_encryption.handler import EncryptionHandler
@@ -36,7 +44,7 @@ class TestEncryptionHandler(BaseS3EncryptTest):
 
         handler = EncryptionHandler(self.mock_provider)
 
-        context = handler.build_request_context(self.base_context)
+        context = handler.build_request_context(self.base_request_context)
 
         EncryptionHandler.build_envelope = old_build_env
 
