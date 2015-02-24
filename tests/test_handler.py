@@ -64,3 +64,38 @@ class TestEncryptionHandler(BaseHandlerTest):
         assert_equal(envelope['x-amz-key'], self.encrypted_key)
         assert_equal(envelope['x-amz-iv'], self.encode64(self.iv))
         assert_equal(envelope['x-amz-matdesc'], self.matdesc)
+
+
+class TestDecryptionHandler(BaseHandlerTest):
+
+    def test_build_response_context(self):
+        from s3_encryption.handler import DecryptionHandler
+        old_deconstruct = DecryptionHandler.deconstruct_envelope
+        mock_metadata = {
+            'x-amz-key': self.encrypted_key,
+            'x-amz-iv': self.encode64(self.iv),
+            'x-amz-matdesc': self.matdesc
+        }
+
+        def decon(x):
+            x.envelope.key = self.key
+        DecryptionHandler.deconstruct_envelope = decon
+
+        handler = DecryptionHandler(self.mock_provider)
+        context = handler.build_response_context(mock_metadata, self.base_response_context)
+
+        DecryptionHandler.deconstruct_envelope = old_deconstruct
+
+        assert_equal(context['raw_body'], self.raw_body)
+
+    def test_deconstruct_envelope(self):
+        from s3_encryption.handler import DecryptionHandler
+        handler = DecryptionHandler(self.mock_provider)
+
+        class Envelope(object):
+            # EncryptionEnvelope takes care of base64 decoding items when
+            # they're returned
+            key = self.decode64(self.encrypted_key)
+        handler.envelope = Envelope()
+        handler.deconstruct_envelope()
+        assert_equal(handler.envelope.key, self.key)
