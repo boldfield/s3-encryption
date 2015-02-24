@@ -28,7 +28,7 @@ class DecryptionHandler(object):
     def __init__(self, provider):
         self.provider = provider
 
-    def build_request_context(self, obj_metadata, context):
+    def build_response_context(self, obj_metadata, context):
         self.envelope = EncryptionEnvelope()
         self.envelope.from_metadata(obj_metadata)
         self.deconstruct_envelope()
