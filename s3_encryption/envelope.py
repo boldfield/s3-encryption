@@ -1,6 +1,8 @@
 import json
 import base64
 
+from s3_encryption.exceptions import IncompleteMetadataError
+
 
 class EncryptionEnvelope(dict):
 
@@ -38,7 +40,7 @@ class EncryptionEnvelope(dict):
         self['x-amz-iv'] = metadata.get('x-amz-iv')
         self['x-amz-matdesc'] = metadata.get('x-amz-matdesc')
         if not (self['x-amz-key'] and self['x-amz-iv'] and self['x-amz-matdesc']):
-            raise Exception('metadata keys are required for decryption.')
+            raise IncompleteMetadataError('All metadata keys are required for decryption (x-amz-key, x-amz-iv, x-amz-matdesc).')
 
     @classmethod
     def encode64(self, data):

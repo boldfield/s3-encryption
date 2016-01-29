@@ -1,7 +1,8 @@
-from nose.tools import assert_equal
+from nose.tools import (assert_equal, raises)
 from mock import Mock
 
 from s3_encryption.envelope import EncryptionEnvelope
+from s3_encryption.exceptions import IncompleteMetadataError
 
 from . import BaseS3EncryptTest
 
@@ -40,3 +41,36 @@ class TestEnvelope(BaseS3EncryptTest):
         assert_equal(envelope['x-amz-iv'], self.iv_64)
         assert_equal(envelope.key, self.key)
         assert_equal(envelope['x-amz-key'], self.key_64)
+
+    @raises(IncompleteMetadataError)
+    def test_from_metadata_missing_key(self):
+        meta = {
+            'x-amz-matdesc': '{}',
+            'x-amz-iv': self.iv_64,
+        }
+        envelope = EncryptionEnvelope()
+        envelope.from_metadata(meta)
+
+    @raises(IncompleteMetadataError)
+    def test_from_metadata_missing_matdesc(self):
+        meta = {
+            'x-amz-iv': self.iv_64,
+            'x-amz-key': self.key_64
+        }
+        envelope = EncryptionEnvelope()
+        envelope.from_metadata(meta)
+
+    @raises(IncompleteMetadataError)
+    def test_from_metadata_missing_iv(self):
+        meta = {
+            'x-amz-matdesc': '{}',
+            'x-amz-key': self.key_64
+        }
+        envelope = EncryptionEnvelope()
+        envelope.from_metadata(meta)
+
+    @raises(IncompleteMetadataError)
+    def test_from_metadata_empty(self):
+        meta = {}
+        envelope = EncryptionEnvelope()
+        envelope.from_metadata(meta)
