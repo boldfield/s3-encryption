@@ -1,4 +1,5 @@
 import base64
+import codecs
 import unittest
 
 
@@ -13,7 +14,7 @@ def teardown_package(self):
 class BaseS3EncryptTest(unittest.TestCase):
 
     def decode64(self, data):
-        return base64.b64decode(data)
+        return base64.b64decode(codecs.decode(data, 'utf-8'))
 
     def encode64(self, data):
-        return base64.b64encode(data)
+        return codecs.encode(base64.b64encode(data), 'utf-8')
