@@ -1,13 +1,21 @@
 from nose.tools import assert_equal
 from mock import Mock
-
+import codecs
 
 from . import BaseS3EncryptTest
 
 
 class BaseHandlerTest(BaseS3EncryptTest):
+
+    @staticmethod
+    def bytes_to_str(data):
+        t = type(b''.decode('utf-8'))
+        if not isinstance(data, t):
+            return data.decode('utf-8')
+        return data
+
     def setUp(self):
-        self.iv = self.decode64("TO5mQgtOzWkTfoX4RE5tsA==")
+        self.iv = self.decode64(codecs.encode("TO5mQgtOzWkTfoX4RE5tsA==", 'utf-8'))
         self.key = self.decode64("uSwsRlIMhY1klVYrgqceqjmQMmARcNl7rEKWW+7HVvA=")
         self.encrypted_key = 'gX+a4JQYj7FP0y5TAAvxTz4e2l0DvOItbXByml/NPtKQcUlsoGHoYR/T0TuYHcNj'
 
@@ -86,7 +94,7 @@ class TestDecryptionHandler(BaseHandlerTest):
 
         DecryptionHandler.deconstruct_envelope = old_deconstruct
 
-        assert_equal(context['raw_body'], self.raw_body)
+        assert_equal(self.bytes_to_str(context['raw_body']), self.raw_body)
 
     def test_deconstruct_envelope(self):
         from s3_encryption.handler import DecryptionHandler

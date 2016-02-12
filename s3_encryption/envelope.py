@@ -45,8 +45,16 @@ class EncryptionEnvelope(dict):
 
     @classmethod
     def encode64(self, data):
-        return codecs.encode(base64.b64encode(data), 'utf-8')
+        try:
+            byte_data = bytes(data, 'utf-8')
+        except TypeError:
+            byte_data = bytes(data)
+        return codecs.decode(base64.b64encode(byte_data), 'utf-8')
 
     @classmethod
     def decode64(self, data):
-        return base64.b64decode(codecs.decode(data, 'utf-8'))
+        try:
+            byte_data = bytes(data, 'utf-8')
+        except TypeError:
+            byte_data = bytes(data)
+        return base64.b64decode(byte_data)
