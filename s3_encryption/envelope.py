@@ -1,5 +1,6 @@
 import json
 import base64
+import codecs
 
 from s3_encryption.exceptions import IncompleteMetadataError
 
@@ -26,11 +27,11 @@ class EncryptionEnvelope(dict):
 
     @key.setter
     def key(self, key):
-        self['x-amz-key'] = self.encode64(key).encode('utf-8')
+        self['x-amz-key'] = self.encode64(key)
 
     @iv.setter
     def iv(self, iv):
-        self['x-amz-iv'] = self.encode64(iv).encode('utf-8')
+        self['x-amz-iv'] = self.encode64(iv)
 
     def json(self):
         return json.dumps(self)
@@ -44,8 +45,16 @@ class EncryptionEnvelope(dict):
 
     @classmethod
     def encode64(self, data):
-        return base64.b64encode(data)
+        try:
+            byte_data = bytes(data, 'utf-8')
+        except TypeError:
+            byte_data = bytes(data)
+        return codecs.decode(base64.b64encode(byte_data), 'utf-8')
 
     @classmethod
     def decode64(self, data):
-        return base64.b64decode(data)
+        try:
+            byte_data = bytes(data, 'utf-8')
+        except TypeError:
+            byte_data = bytes(data)
+        return base64.b64decode(byte_data)
