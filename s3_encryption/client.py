@@ -16,19 +16,19 @@ class S3EncryptionClient(object):
         self.envelope_location = self.extract_location(**kwargs)
         self.instruction_file_suffix = self.extract_suffix(**kwargs)
 
-    def put_object(self, Bucket=None, Key=None, Body=None, ACL=None):
+    def put_object(self, Bucket=None, Key=None, Body=None, ACL=None, **kwargs):
         context = {
             'raw_body': Body,
             'cipher': crypto.aes_cipher(mode='CBC')
         }
         handler = EncryptionHandler(self.key_provider)
         context = handler.build_request_context(context)
-        kwargs = {
+        kwargs.update({
            'Bucket': Bucket,
            'Key': Key,
            'Body': context['body'],
            'Metadata': context['envelope']
-        }
+        })
         if ACL is not None:
             kwargs['ACL'] = ACL
         self.client.put_object(**kwargs)
